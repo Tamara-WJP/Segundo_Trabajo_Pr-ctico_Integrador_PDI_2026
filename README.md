@@ -1,3 +1,9 @@
+---
+title: Seña a Texto LSA
+sdk: gradio
+app_file: app.py
+python_version: 3.11
+---
 # Seña a Texto (LSA)
 
 Prototipo educativo de reconocimiento basico de señas usando Python,
@@ -67,7 +73,7 @@ El entrenamiento:
 
 Hay que reentrenar cuando se agregan, borran o corrigen muestras del dataset.
 
-## Ejecucion de la app
+## Ejecucion de la app local
 
 ```powershell
 python app.py
@@ -95,7 +101,9 @@ muestran la palabra, el umbral y los porcentajes para todas las clases.
 
 ## Hugging Face Spaces
 
-Para subir la demo, incluir como minimo:
+La aplicación está disponible en Hugging Face Spaces:
+
+[Abrir Seña a Texto LSA](https://huggingface.co/spaces/Tmara17/Sena-a-texto)
 
 - `app.py`
 - `config.py`
