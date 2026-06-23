@@ -1,5 +1,6 @@
 from collections import deque
 import html
+import logging
 import os
 from pathlib import Path
 import time
@@ -7,6 +8,14 @@ import time
 import cv2
 import gradio as gr
 import numpy as np
+
+logging.basicConfig(
+    level=logging.WARNING,
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+)
+logging.getLogger("fastrtc").setLevel(logging.DEBUG)
+logging.getLogger("aioice").setLevel(logging.INFO)
+logging.getLogger("aiortc").setLevel(logging.INFO)
 
 from config import (
     CONFIANZA_MINIMA_PREDICCION,
@@ -458,7 +467,14 @@ def crear_interfaz() -> gr.Blocks:
         async def obtener_configuracion_turn():
             try:
                 configuracion = await get_cloudflare_turn_credentials_async()
-                print("Credenciales TURN obtenidas correctamente.", flush=True)
+                configuracion["iceTransportPolicy"] = "relay"
+                camara.server_rtc_configuration = camara.convert_to_aiortc_format(
+                    configuracion
+                )
+                print(
+                    "Credenciales TURN configuradas en navegador y servidor.",
+                    flush=True,
+                )
                 return configuracion
             except Exception as error:
                 print(f"Error obteniendo credenciales TURN: {error!r}", flush=True)
