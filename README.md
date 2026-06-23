@@ -1,6 +1,7 @@
 ---
 title: Seña a Texto LSA
 sdk: gradio
+_version: 5.50.0
 app_file: app.py
 python_version: 3.11
 ---
