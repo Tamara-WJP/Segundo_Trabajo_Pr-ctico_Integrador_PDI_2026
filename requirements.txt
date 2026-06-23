@@ -4,5 +4,5 @@ numpy>=1.26.4
 scikit-learn>=1.5.1
 joblib>=1.4.2
 gradio==5.50.0
-fastrt==0.0.34
+fastrtc==0.0.34
 Pillow>=10.4.0
