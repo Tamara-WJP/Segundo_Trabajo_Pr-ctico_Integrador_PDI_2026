@@ -1,0 +1,1 @@
+"""Utilidades reutilizables para SenaText."""

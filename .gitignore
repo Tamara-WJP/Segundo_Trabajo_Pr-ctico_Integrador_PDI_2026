@@ -1,0 +1,28 @@
+.venv/
+venv/
+env/
+
+__pycache__/
+*.pyc
+*.pyo
+
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Datos grandes generados localmente.
+data/sequences/**/*.npy
+*.mp4
+*.avi
+*.mov
+*.mkv
+
+# Modelo generado localmente.
+# Para deploy se puede versionar models/sign_model.joblib si el Space lo necesita.
+models/*.joblib
+
+# Archivos temporales y del sistema.
+.DS_Store
+Thumbs.db
+*.tmp
+*.log
