@@ -122,6 +122,14 @@ git add -f models/sign_model.joblib
 FastRTC permite usar camara del navegador en un deploy web. En Spaces puede ser
 necesario configurar WebRTC/TURN si la conexion no inicia correctamente.
 
+Para habilitar TURN en Hugging Face Spaces:
+
+1. Crear un token de Hugging Face con permiso de lectura.
+2. En `Settings > Variables and secrets`, agregarlo como secreto `HF_TOKEN`.
+3. Ejecutar `Factory reboot` despues de subir los cambios.
+
+No guardar el valor del token en Git ni escribirlo directamente en `app.py`.
+
 ## Archivos auxiliares
 
 `GUIA_FUNCIONES.md` resume las funciones principales, que hacen y donde se usan.
