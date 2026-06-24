@@ -128,6 +128,15 @@ Para habilitar TURN en Hugging Face Spaces:
 2. En `Settings > Variables and secrets`, agregarlo como secreto `HF_TOKEN`.
 3. Ejecutar `Factory reboot` despues de subir los cambios.
 
+Si el servicio comunitario `turn.fastrtc.org` no esta disponible, se puede usar
+Cloudflare Calls directamente. Crear una aplicacion TURN en Cloudflare y agregar
+estos secretos al Space:
+
+- `CLOUDFLARE_TURN_KEY_ID`
+- `CLOUDFLARE_TURN_KEY_API_TOKEN`
+
+Cuando ambos existen, la app prioriza Cloudflare directo sobre `HF_TOKEN`.
+
 No guardar el valor del token en Git ni escribirlo directamente en `app.py`.
 
 ## Archivos auxiliares

@@ -1,4 +1,5 @@
 from collections import deque
+import asyncio
 import html
 import logging
 import os
@@ -443,10 +444,22 @@ def crear_interfaz() -> gr.Blocks:
 
     detector = DetectorSeñasWebRTC()
     ultimo_estado_mostrado = {"valor": detector.estado_actual}
-    usar_turn = bool(os.getenv("HF_TOKEN")) and (
-        get_cloudflare_turn_credentials_async is not None
+    usar_cloudflare_directo = bool(
+        os.getenv("CLOUDFLARE_TURN_KEY_ID")
+        and os.getenv("CLOUDFLARE_TURN_KEY_API_TOKEN")
     )
-    print(f"TURN para Hugging Face: {'habilitado' if usar_turn else 'deshabilitado'}", flush=True)
+    usar_hf_turn = bool(os.getenv("HF_TOKEN"))
+    usar_turn = (
+        usar_cloudflare_directo or usar_hf_turn
+    ) and get_cloudflare_turn_credentials_async is not None
+    proveedor_turn = (
+        "Cloudflare directo"
+        if usar_cloudflare_directo
+        else "Hugging Face"
+        if usar_hf_turn
+        else "ninguno"
+    )
+    print(f"TURN habilitado: {usar_turn}. Proveedor: {proveedor_turn}.", flush=True)
 
     with gr.Blocks(title=TITULO_PROYECTO, css=CSS_INTERFAZ) as interfaz:
         gr.Markdown(
@@ -465,20 +478,33 @@ def crear_interfaz() -> gr.Blocks:
         )
 
         async def obtener_configuracion_turn():
-            try:
-                configuracion = await get_cloudflare_turn_credentials_async()
-                configuracion["iceTransportPolicy"] = "relay"
-                camara.server_rtc_configuration = camara.convert_to_aiortc_format(
-                    configuracion
-                )
-                print(
-                    "Credenciales TURN configuradas en navegador y servidor.",
-                    flush=True,
-                )
-                return configuracion
-            except Exception as error:
-                print(f"Error obteniendo credenciales TURN: {error!r}", flush=True)
-                raise
+            ultimo_error = None
+            for intento in range(1, 4):
+                try:
+                    configuracion = await get_cloudflare_turn_credentials_async(
+                        hf_token="" if usar_cloudflare_directo else None,
+                    )
+                    configuracion["iceTransportPolicy"] = "relay"
+                    camara.server_rtc_configuration = camara.convert_to_aiortc_format(
+                        configuracion
+                    )
+                    print(
+                        "Credenciales TURN configuradas en navegador y servidor.",
+                        flush=True,
+                    )
+                    return configuracion
+                except Exception as error:
+                    ultimo_error = error
+                    print(
+                        f"Intento TURN {intento}/3 fallido: {error!r}",
+                        flush=True,
+                    )
+                    if intento < 3:
+                        await asyncio.sleep(intento * 2)
+
+            raise RuntimeError(
+                f"No se pudieron obtener credenciales TURN: {ultimo_error}"
+            )
 
         def actualizar_estado_si_cambio():
             estado_actual = detector.estado_actual
